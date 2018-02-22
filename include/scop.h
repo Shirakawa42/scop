@@ -8,5 +8,3 @@
 
 # define OPENGL_VERSION "4.0"
 # define ANTI_ALIASING 4
-
-GLuint	LoadShaders(const char *vertex_file_path, const char *fragment_file_path);
