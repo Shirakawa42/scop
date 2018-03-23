@@ -8,3 +8,7 @@
 
 # define OPENGL_VERSION "4.0"
 # define ANTI_ALIASING 4
+
+GLuint		create_program(GLuint vertex, GLuint fragment);
+GLuint		create_shader(char *filename, int shadertype);
+char		*load_file(char *filename);

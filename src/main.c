@@ -6,13 +6,13 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/22 15:27:59 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/03/02 15:31:41 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/03/23 15:28:34 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scop.h"
 
-int		main(int ac, char **av)
+int		main(void)
 {
 	GLFWwindow				*win;
 	GLuint					VertexArrayID;
@@ -22,9 +22,10 @@ int		main(int ac, char **av)
 		1.0f, -1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,
 	};
+	GLuint					vertex;
+	GLuint					fragment;
+	GLuint					program_id;
 
-	if (ac != 2)
-		return (0);
 	if (!glfwInit())
 	{
 		ft_putstr("Failed to initialize GLFW\n");
@@ -43,17 +44,24 @@ int		main(int ac, char **av)
 		return (-1);
 	}
 	glfwMakeContextCurrent(win);
+
+	glfwSetInputMode(win, GLFW_STICKY_KEYS, GL_TRUE);
+
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
+
+	fragment = create_shader("../shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	vertex = create_shader("../shaders/vertex.glsl", GL_VERTEX_SHADER);
+	program_id = create_program(vertex, fragment);
 
 	glGenBuffers(1, &vertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-	glfwSetInputMode(win, GLFW_STICKY_KEYS, GL_TRUE);
 	while (glfwGetKey(win, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(win) == 0)
 	{
-
+		glClear(GL_COLOR_BUFFER_BIT);
+		glUseProgram(program_id);
 		glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -63,5 +71,9 @@ int		main(int ac, char **av)
 		glfwSwapBuffers(win);
 		glfwPollEvents();
 	}
+	glDeleteBuffers(1, &vertexBuffer);
+	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteProgram(program_id);
+	glfwTerminate();
 	return (0);
 }

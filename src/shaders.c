@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/22 15:28:07 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/03/02 16:07:26 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/03/06 13:45:07 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ char		*load_file(char *filename)
 	int		r;
 	int		fd;
 
-	if (!(fd = open(filename, O_RDONLY)))
-		return (NULL);
-	while (r = read(fd, buf, BUFF_SIZE))
+	file = ft_strnew(BUFF_SIZE);
+	if ((fd = open(filename, O_RDONLY)) == -1)
+		exit(0);
+	while ((r = read(fd, buf, BUFF_SIZE)))
 	{
 		buf[r] = '\0';
 		tmp = ft_strdup(file);
@@ -52,4 +53,23 @@ GLuint		create_shader(char *filename, int shadertype)
 		return -1;
 	}
 	return (shader);
+}
+
+GLuint		create_program(GLuint vertex, GLuint fragment)
+{
+	GLuint	program_id;
+	GLint	result;
+	int		info_log_lenght;
+
+	result = GL_FALSE;
+	program_id = glCreateProgram();
+	glAttachShader(program_id, vertex);
+	glAttachShader(program_id, fragment);
+	glLinkProgram(program_id);
+	glDetachShader(program_id, vertex);
+	glDetachShader(program_id, fragment);
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+
+	return (program_id);
 }
