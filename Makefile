@@ -6,7 +6,7 @@
 #    By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/22 13:30:54 by lvasseur          #+#    #+#              #
-#    Updated: 2018/11/14 15:19:48 by lvasseur         ###   ########.fr        #
+#    Updated: 2018/11/14 18:31:11 by lvasseur         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ INC_PATH = ./include/ $(LIB_PATH)libft/ $(LIB_PATH)glfw/include/ $(LIB_PATH)glew
 GCC_FLGS = #-Werror -Wextra -Wall
 GCC_LIBS = -lglfw3 -framework AppKit -framework OpenGL -framework IOKit -framework CoreVideo
 
-SRC_NAME = main.c shaders.c glew.c
+SRC_NAME = main.c shaders.c glew.c rotation_matrix.c
 OBJ_NAME = $(SRC_NAME:.c=.o)
 LIB_NAME = libft glfw/src
 
