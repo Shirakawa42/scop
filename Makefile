@@ -6,7 +6,7 @@
 #    By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/22 13:30:54 by lvasseur          #+#    #+#              #
-#    Updated: 2018/02/22 15:27:50 by lvasseur         ###   ########.fr        #
+#    Updated: 2018/11/14 15:19:48 by lvasseur         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,15 +18,14 @@ CC = gcc
 SRC_PATH = ./src/
 OBJ_PATH = ./obj/
 LIB_PATH = ./lib/
-INC_PATH = ./include/ $(LIB_PATH)libft/include/ $(LIB_PATH)glfw/include/ \
-			$(LIB_PATH)libmat4/include/
+INC_PATH = ./include/ $(LIB_PATH)libft/ $(LIB_PATH)glfw/include/ $(LIB_PATH)glew/
 
 GCC_FLGS = #-Werror -Wextra -Wall
 GCC_LIBS = -lglfw3 -framework AppKit -framework OpenGL -framework IOKit -framework CoreVideo
 
-SRC_NAME = main.c shaders.c
+SRC_NAME = main.c shaders.c glew.c
 OBJ_NAME = $(SRC_NAME:.c=.o)
-LIB_NAME = libft libmat4 glfw/src
+LIB_NAME = libft glfw/src
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_PATH), $(OBJ_NAME))
@@ -37,8 +36,7 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C $(LIB_PATH)libft -j
-	make -C $(LIB_PATH)libmat4 -j
-	$(CC) $(GCC_FLGS) $(LIB) -lft -lmat4 $(INC) $(OBJ) $(GCC_LIBS) -o $(NAME)
+	$(CC) $(GCC_FLGS) $(LIB) -lft $(INC) $(OBJ) $(GCC_LIBS) -o $(NAME)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	mkdir -p $(OBJ_PATH)
@@ -50,7 +48,6 @@ clean:
 
 fclean: clean
 	make -C $(LIB_PATH)libft fclean
-	make -C $(LIB_PATH)libmat4 fclean
 	rm -fv $(NAME)
 
 re: fclean all
