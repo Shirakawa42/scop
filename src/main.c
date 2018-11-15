@@ -12,6 +12,9 @@
 
 #include "scop.h"
 
+t_mat4	g_matrix;
+float	g_delta_time;
+
 void	error(char *error)
 {
 	ft_putstr(error);
@@ -22,12 +25,12 @@ void	error(char *error)
 int		main(void)
 {
 	float points[] = {
-		-1.0f,-1.0f,-1.0f, // triangle 1 : begin
-		-1.0f,-1.0f, 1.0f,
-		-1.0f, 1.0f, 1.0f, // triangle 1 : end
-		1.0f, 1.0f,-1.0f, // triangle 2 : begin
 		-1.0f,-1.0f,-1.0f,
-		-1.0f, 1.0f,-1.0f, // triangle 2 : end
+		-1.0f,-1.0f, 1.0f,
+		-1.0f, 1.0f, 1.0f,
+		1.0f, 1.0f,-1.0f,
+		-1.0f,-1.0f,-1.0f,
+		-1.0f, 1.0f,-1.0f,
 		1.0f,-1.0f, 1.0f,
 		-1.0f,-1.0f,-1.0f,
 		1.0f,-1.0f,-1.0f,
@@ -59,23 +62,6 @@ int		main(void)
 		-1.0f, 1.0f, 1.0f,
 		1.0f,-1.0f, 1.0f
 	};
-
-	int i = 0;
-	t_vec3	vec;
-
-	while (i < 12*9)
-	{
-		vec.x = points[i] * 0.5f;
-		vec.y = points[i + 1] * 0.5f;
-		vec.z = points[i + 2] * 0.5f;
-		vec = rotation_matrix_x(vec, 90.0f);
-		vec = rotation_matrix_y(vec, 90.0f);
-		vec = rotation_matrix_z(vec, 90.0f);
-		points[i] = vec.x;
-		points[i + 1] = vec.y;
-		points[i + 2] = vec.z;
-		i += 3;
-	}
 
 	float colours[] = {
 		0.583f,  0.771f,  0.014f,
@@ -126,7 +112,7 @@ int		main(void)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(1280, 1280, "Hello Triangle", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(W, H, "Hello Triangle", NULL, NULL);
 	if (!window) {
 		fprintf(stderr, "ERROR: could not open window with GLFW3\n");
 		glfwTerminate();
@@ -171,11 +157,13 @@ int		main(void)
 		"layout(location = 0) in vec3 vertex_position;"
 		"layout(location = 1) in vec3 vertex_colour;"
 
+		"uniform mat4 	mvp;"
+
 		"out vec3 colour;"
 
 		"void main() {"
 			"colour = vertex_colour;"
-			"gl_Position = vec4(vertex_position, 1.0);"
+			"gl_Position = mvp * vec4(vertex_position, 1.0);"
 		"}";
 	const char* fragment_shader =
 		"#version 400\n"
@@ -184,28 +172,38 @@ int		main(void)
 		"void main() {"
 		"  frag_colour = vec4(colour, 1.0);"
 		"}";
-	GLuint vs = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vs, 1, &vertex_shader, NULL);
-	glCompileShader(vs);
-	GLuint fs = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fs, 1, &fragment_shader, NULL);
-	glCompileShader(fs);
-	GLuint shader_programme = glCreateProgram();
-	glAttachShader(shader_programme, fs);
-	glAttachShader(shader_programme, vs);
-	glLinkProgram(shader_programme);
+	GLuint vs = create_shader("./shaders/vertex.glsl", GL_VERTEX_SHADER);
+	GLuint fs = create_shader("./shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	GLuint shader_programme = create_program(vs, fs);
 
-	while(!glfwWindowShouldClose(window)) {
+	GLint	matrixID = glGetUniformLocation(shader_programme, "mvp");
+
+	glfwSetKeyCallback(window, key_callback);
+
+	float	current_frame;
+	float	last_frame;
+
+	g_delta_time = 0.0f;
+	g_matrix = scaling_matrix(1.0f);
+	current_frame = glfwGetTime();
+	last_frame = current_frame;
+
+	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS) {
 		// wipe the drawing surface clear
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shader_programme);
+		glUniformMatrix4fv(matrixID, 1, GL_FALSE, g_matrix.m);
 		glBindVertexArray(vao);
 		// draw points 0-3 from the currently bound VAO with current in-use shader
 		glDrawArrays(GL_TRIANGLES, 0, 12*3);
 		// update other events like input handling 
 		glfwPollEvents();
+		events();
 		// put the stuff we've been drawing onto the display
 		glfwSwapBuffers(window);
+		current_frame = glfwGetTime();
+		g_delta_time = current_frame - last_frame;
+		last_frame = current_frame;
 	}
 
 	// close GL context and any other GLFW resources

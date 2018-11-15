@@ -38,30 +38,19 @@ GLuint		create_shader(char *filename, int shadertype)
 {
 	GLuint		shader;
 	char		*file;
-	GLint		compile_status;
 
-	compile_status = GL_TRUE;
 	shader = glCreateShader(shadertype);
 	file = load_file(filename);
-	glShaderSource(shader, 1, (const GLchar**)&file, NULL);
+	glShaderSource(shader, 1, (const char **)&file, NULL);
 	glCompileShader(shader);
 	free(file);
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
-	if (compile_status != GL_TRUE)
-	{
-		ft_putstr("Erreur dans la compilation du shader\n");
-		return -1;
-	}
 	return (shader);
 }
 
 GLuint		create_program(GLuint vertex, GLuint fragment)
 {
 	GLuint	program_id;
-	GLint	result;
-	int		info_log_lenght;
 
-	result = GL_FALSE;
 	program_id = glCreateProgram();
 	glAttachShader(program_id, vertex);
 	glAttachShader(program_id, fragment);
