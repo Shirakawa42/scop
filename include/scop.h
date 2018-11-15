@@ -48,3 +48,4 @@ t_vec3		matrix_mul(t_mat4 matrix, t_vec3 vec);
 t_mat4		scaling_matrix(float scale);
 void		key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void		events();
+void		time_handle();
