@@ -23,7 +23,7 @@ INC_PATH = ./include/ $(LIB_PATH)libft/ $(LIB_PATH)glfw/include/ $(LIB_PATH)glew
 GCC_FLGS = #-Werror -Wextra -Wall
 GCC_LIBS = -lglfw -lGL -lGLU -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor -lm
 
-SRC_NAME = main.c shaders.c glew.c rotation_matrix.c matrices.c inputs.c
+SRC_NAME = main.c shaders.c glew.c rotation_matrix.c matrices.c inputs.c parser.c
 OBJ_NAME = $(SRC_NAME:.c=.o)
 LIB_NAME = libft glfw/src
 

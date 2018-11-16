@@ -1,3 +1,7 @@
+# ifndef SCOP_H
+
+# define SCOP_H
+
 # include "libft.h"
 # include <math.h>
 # include <stdio.h>
@@ -49,3 +53,6 @@ t_mat4		scaling_matrix(float scale);
 void		key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void		events();
 void		time_handle();
+int			parse(char *file, float **vertex, unsigned int **indices, int *vsize, int *isize);
+
+#endif

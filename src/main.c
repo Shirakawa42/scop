@@ -37,41 +37,28 @@ void	time_handle()
 	}
 }
 
-int		main(void)
+int		main(int ac, char **av)
 {
-	float	points[] = {
-    // front
-    -1.0, -1.0,  1.0,
-     1.0, -1.0,  1.0,
-     1.0,  1.0,  1.0,
-    -1.0,  1.0,  1.0,
-    // back
-    -1.0, -1.0, -1.0,
-     1.0, -1.0, -1.0,
-     1.0,  1.0, -1.0,
-    -1.0,  1.0, -1.0,
-	};
+	float			*points;
+	unsigned int	*indices;
+	int				sizev;
+	int				sizei;
 
-	unsigned int	indices[] = {
-		// front
-		0, 1, 2,
-		2, 3, 0,
-		// right
-		1, 5, 6,
-		6, 2, 1,
-		// back
-		7, 6, 5,
-		5, 4, 7,
-		// left
-		4, 0, 3,
-		3, 7, 4,
-		// bottom
-		4, 5, 1,
-		1, 0, 4,
-		// top
-		3, 2, 6,
-		6, 7, 3,
-	};
+	points = NULL;
+	indices = NULL;
+
+	sizei = 0;
+	sizev = 0;
+
+	if (ac < 2)
+		return (-1);
+	if (parse(av[1], &points, &indices, &sizev, &sizei) == -1)
+		return (-1);
+
+	for (int i = 0 ; i < sizev ; i += 3)
+	{
+		printf("%f %f %f\n", points[i], points[i + 1], points[i + 2]);
+	}
 
 	g_delta_time = 0.0f;
 	g_matrix = scaling_matrix(1.0f);
@@ -102,7 +89,7 @@ int		main(void)
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizev * sizeof(float), points, GL_STATIC_DRAW);
 
 	GLuint	ibo;
 	glGenBuffers(1, &ibo);
@@ -113,7 +100,7 @@ int		main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizei * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
@@ -134,7 +121,7 @@ int		main(void)
 		glUniformMatrix4fv(matrixID, 1, GL_FALSE, g_matrix.m);
 
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLES, sizei, GL_UNSIGNED_INT, NULL);
 		glBindVertexArray(0);
 
 		glfwPollEvents();
@@ -143,5 +130,7 @@ int		main(void)
 		glfwSwapBuffers(window);
 	}
 	glfwTerminate();
+	free(indices);
+	free(points);
 	return 0;
 }
