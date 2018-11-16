@@ -7,6 +7,6 @@ uniform mat4 	mvp;
 out vec3 colour;
 
 void main() {
-	colour = vec3(1, 0, 0);
+	colour = vertex_position;
 	gl_Position = mvp * vec4(vertex_position, 1.0);
 }

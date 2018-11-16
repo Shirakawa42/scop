@@ -40,18 +40,37 @@ void	time_handle()
 int		main(void)
 {
 	float	points[] = {
-		-1.0, -1.0,  1.0,
-		1.0, -1.0,  1.0,
-		-1.0,  1.0,  1.0,
-		1.0,  1.0,  1.0,
-		-1.0, -1.0, -1.0,
-		1.0, -1.0, -1.0,
-		-1.0,  1.0, -1.0,
-		1.0,  1.0, -1.0,
+    // front
+    -1.0, -1.0,  1.0,
+     1.0, -1.0,  1.0,
+     1.0,  1.0,  1.0,
+    -1.0,  1.0,  1.0,
+    // back
+    -1.0, -1.0, -1.0,
+     1.0, -1.0, -1.0,
+     1.0,  1.0, -1.0,
+    -1.0,  1.0, -1.0,
 	};
 
-	float	indices[] = {
-		0, 1, 2, 3, 7, 1, 5, 4, 7, 6, 2, 4, 0, 1
+	unsigned int	indices[] = {
+		// front
+		0, 1, 2,
+		2, 3, 0,
+		// right
+		1, 5, 6,
+		6, 2, 1,
+		// back
+		7, 6, 5,
+		5, 4, 7,
+		// left
+		4, 0, 3,
+		3, 7, 4,
+		// bottom
+		4, 5, 1,
+		1, 0, 4,
+		// top
+		3, 2, 6,
+		6, 7, 3,
 	};
 
 	g_delta_time = 0.0f;
@@ -115,7 +134,7 @@ int		main(void)
 		glUniformMatrix4fv(matrixID, 1, GL_FALSE, g_matrix.m);
 
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, 14, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, NULL);
 		glBindVertexArray(0);
 
 		glfwPollEvents();
