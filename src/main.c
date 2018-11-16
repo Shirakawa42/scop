@@ -55,11 +55,6 @@ int		main(int ac, char **av)
 	if (parse(av[1], &points, &indices, &sizev, &sizei) == -1)
 		return (-1);
 
-	for (int i = 0 ; i < sizev ; i += 3)
-	{
-		printf("%f %f %f\n", points[i], points[i + 1], points[i + 2]);
-	}
-
 	g_delta_time = 0.0f;
 	g_matrix = scaling_matrix(1.0f);
 

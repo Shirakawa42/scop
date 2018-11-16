@@ -71,7 +71,7 @@ static void	add_indice(char *str, unsigned int **indice, int *size, int *error)
 	*indice = v;
 	while (i < nb)
 	{
-		v[*size] = ft_atoi(str);
+		v[*size] = ft_atoi(str) - 1;
 		*size += 1;
 		while (*str >= '0' && *str <= '9')
 			*str++;
