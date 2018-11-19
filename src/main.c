@@ -13,6 +13,7 @@
 #include "scop.h"
 
 t_mat4	g_matrix;
+t_mat4	g_translation;
 float	g_delta_time;
 
 void	time_handle()
@@ -40,9 +41,13 @@ void	time_handle()
 int		main(int ac, char **av)
 {
 	float			*points;
+	float			*uv;
 	unsigned int	*indices;
 	int				sizev;
 	int				sizei;
+	int				sizeuv;
+	GLuint			textureID;
+	GLuint			texture;
 
 	points = NULL;
 	indices = NULL;
@@ -55,8 +60,11 @@ int		main(int ac, char **av)
 	if (parse(av[1], &points, &indices, &sizev, &sizei) == -1)
 		return (-1);
 
+
 	g_delta_time = 0.0f;
 	g_matrix = scaling_matrix(1.0f);
+	center_object_and_distance(&points, sizev);
+	uv = generate_uv(points, sizev, &sizeuv);
 
 	if (!glfwInit()) {
 		fprintf(stderr, "ERROR: could not start GLFW3\n");
@@ -66,6 +74,8 @@ int		main(int ac, char **av)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+
 
 	GLFWwindow* window = glfwCreateWindow(W, H, "Scop", NULL, NULL);
 	if (!window) {
@@ -103,13 +113,15 @@ int		main(int ac, char **av)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBindVertexArray(0);
 
-	GLuint vs = create_shader("./shaders/vertex.glsl", GL_VERTEX_SHADER);
-	GLuint fs = create_shader("./shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	texture = load_bmp("../texture/wood.bmp");
+
+	GLuint vs = create_shader("../shaders/vertex.glsl", GL_VERTEX_SHADER);
+	GLuint fs = create_shader("../shaders/fragment.glsl", GL_FRAGMENT_SHADER);
 	GLuint shader_programme = create_program(vs, fs);
 
 	GLint	matrixID = glGetUniformLocation(shader_programme, "mvp");
 	glfwSetKeyCallback(window, key_callback);
-
+	glEnable(GL_MULTISAMPLE);
 	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shader_programme);

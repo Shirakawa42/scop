@@ -46,4 +46,6 @@ void	events()
 		g_matrix = matrix_matrix_mul(g_matrix, rotation_matrix_y(3.0f * g_delta_time));
 	else if (g_inputs.left == 1)
 		g_matrix = matrix_matrix_mul(g_matrix, rotation_matrix_y(-3.0f * g_delta_time));
+	else
+		g_matrix = matrix_matrix_mul(g_matrix, rotation_matrix_y(1.0f * g_delta_time));
 }

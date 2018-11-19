@@ -38,6 +38,7 @@ typedef struct	s_inputs
 }				t_inputs;
 
 extern t_mat4	g_matrix;
+extern t_mat4	g_translation;
 extern t_inputs	g_inputs;
 extern float	g_delta_time;
 
@@ -54,5 +55,8 @@ void		key_callback(GLFWwindow* window, int key, int scancode, int action, int mo
 void		events();
 void		time_handle();
 int			parse(char *file, float **vertex, unsigned int **indices, int *vsize, int *isize);
+void		center_object_and_distance(float **vertex, int size);
+float		*generate_uv(float *vertex, int size, int *sizeuv);
+GLuint		load_bmp(char *filename);
 
 #endif
