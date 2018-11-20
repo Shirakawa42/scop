@@ -15,6 +15,7 @@
 t_mat4	g_matrix;
 t_mat4	g_translation;
 float	g_delta_time;
+GLint	g_which;
 
 void	time_handle()
 {
@@ -43,6 +44,7 @@ int		main(int ac, char **av)
 	float			*points;
 	float			*uv;
 	unsigned int	*indices;
+	float			*normals;
 	int				sizev;
 	int				sizei;
 	int				sizeuv;
@@ -51,6 +53,7 @@ int		main(int ac, char **av)
 
 	points = NULL;
 	indices = NULL;
+	normals = NULL;
 
 	sizei = 0;
 	sizev = 0;
@@ -59,11 +62,11 @@ int		main(int ac, char **av)
 		return (-1);
 	if (parse(av[1], &points, &indices, &sizev, &sizei) == -1)
 		return (-1);
-
+	normals = calculate_normals(points, sizev);
 
 	g_delta_time = 0.0f;
 	g_matrix = scaling_matrix(1.0f);
-	center_object_and_distance(&points, sizev);
+	center_object(&points, sizev);
 	uv = generate_uv(points, sizev, &sizeuv);
 
 	if (!glfwInit()) {
@@ -76,6 +79,7 @@ int		main(int ac, char **av)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
+	int error;
 
 	GLFWwindow* window = glfwCreateWindow(W, H, "Scop", NULL, NULL);
 	if (!window) {
@@ -101,6 +105,11 @@ int		main(int ac, char **av)
 	glBindBuffer(GL_ARRAY_BUFFER, tbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeuv * sizeof(float), uv, GL_STATIC_DRAW);
 
+	GLuint nbo = 0;
+	glGenBuffers(1, &nbo);
+	glBindBuffer(GL_ARRAY_BUFFER, nbo);
+	glBufferData(GL_ARRAY_BUFFER, (sizev / 3) * sizeof(float), normals, GL_STATIC_DRAW);
+
 	GLuint	ibo;
 	glGenBuffers(1, &ibo);
 
@@ -118,26 +127,29 @@ int		main(int ac, char **av)
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), NULL);
 
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBindVertexArray(0);
 
-	glTexCoordPointer(2, GL_FLOAT, 0, uv);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
-
-	texture = load_bmp("./texture/wood.bmp");
+	texture = load_bmp("./texture/unicorn.bmp");
 
 	GLuint vs = create_shader("./shaders/vertex.glsl", GL_VERTEX_SHADER);
 	GLuint fs = create_shader("./shaders/fragment.glsl", GL_FRAGMENT_SHADER);
 	GLuint shader_programme = create_program(vs, fs);
 
 	GLint	matrixID = glGetUniformLocation(shader_programme, "mvp");
+	GLint	whichID = glGetUniformLocation(shader_programme, "which");
 	glfwSetKeyCallback(window, key_callback);
 	glEnable(GL_MULTISAMPLE);
+
+	g_which = 0;
 	while(!glfwWindowShouldClose(window) && glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(shader_programme);
 		glUniformMatrix4fv(matrixID, 1, GL_FALSE, g_matrix.m);
+		glUniform1i(whichID, g_which);
 
 		glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, sizei, GL_UNSIGNED_INT, NULL);
@@ -147,9 +159,15 @@ int		main(int ac, char **av)
 		events();
 		time_handle();
 		glfwSwapBuffers(window);
+		if (((error = glGetError()) != GL_NO_ERROR))
+		{
+			ft_putendl(gluErrorString(error));
+		}
 	}
 	glfwTerminate();
 	free(indices);
 	free(points);
+	free(uv);
+	free(normals);
 	return 0;
 }

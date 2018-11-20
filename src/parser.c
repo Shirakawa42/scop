@@ -38,7 +38,7 @@ float	*generate_uv(float *vertex, int size, int *sizeuv)
 	return (uv);
 }
 
-static void	center_object(float **vertex, int size)
+void	center_object(float **vertex, int size)
 {
 	int		i;
 	float	max_x;
@@ -55,6 +55,8 @@ static void	center_object(float **vertex, int size)
 	max_y = 0.0f;
 	min_x = 0.0f;
 	min_y = 0.0f;
+	min_z = 0.0f;
+	max_z = 0.0f;
 	scale = 0.0f;
 	vertices = *vertex;
 	while (i < size)
@@ -97,11 +99,6 @@ static void	center_object(float **vertex, int size)
 		vertices[i + 2] -= max_z;
 		i += 3;
 	}
-}
-
-void		center_object_and_distance(float **vertex, int size)
-{
-	center_object(vertex, size);
 }
 
 static void	add_vertex(char *str, float **vertex, int *size, int *error)

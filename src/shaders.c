@@ -43,6 +43,13 @@ GLuint		create_shader(char *filename, int shadertype)
 	file = load_file(filename);
 	glShaderSource(shader, 1, (const char **)&file, NULL);
 	glCompileShader(shader);
+	GLint success = 0;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		ft_putstr("Failed to compile shader\n");
+		exit(0);
+	}
 	free(file);
 	return (shader);
 }
@@ -55,6 +62,13 @@ GLuint		create_program(GLuint vertex, GLuint fragment)
 	glAttachShader(program_id, vertex);
 	glAttachShader(program_id, fragment);
 	glLinkProgram(program_id);
+	GLint success = 0;
+	glGetProgramiv(program_id, GL_LINK_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		ft_putstr("Failed to link program\n");
+		exit(0);
+	}
 	glDetachShader(program_id, vertex);
 	glDetachShader(program_id, fragment);
 	glDeleteShader(vertex);

@@ -30,6 +30,14 @@ void	key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		g_inputs.zoomout = 1;
 	else if (key == 333 && action == GLFW_RELEASE)
 		g_inputs.zoomout = 0;
+	if (key == 320 && action == GLFW_PRESS)
+		g_which = 0;
+	else if (key == 321 && action == GLFW_PRESS)
+		g_which = 1;
+	else if (key == 322 && action == GLFW_PRESS)
+		g_which = 2;
+	else if (key == 323 && action == GLFW_PRESS)
+		g_which = 3;
 }
 
 void	events()

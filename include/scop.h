@@ -41,6 +41,7 @@ extern t_mat4	g_matrix;
 extern t_mat4	g_translation;
 extern t_inputs	g_inputs;
 extern float	g_delta_time;
+extern GLint	g_which;
 
 GLuint		create_program(GLuint vertex, GLuint fragment);
 GLuint		create_shader(char *filename, int shadertype);
@@ -55,8 +56,9 @@ void		key_callback(GLFWwindow* window, int key, int scancode, int action, int mo
 void		events();
 void		time_handle();
 int			parse(char *file, float **vertex, unsigned int **indices, int *vsize, int *isize);
-void		center_object_and_distance(float **vertex, int size);
+void		center_object(float **vertex, int size);
 float		*generate_uv(float *vertex, int size, int *sizeuv);
 GLuint		load_bmp(char *filename);
+float		*calculate_normals(float *vertex, int size);
 
 #endif
