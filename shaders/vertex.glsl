@@ -5,7 +5,7 @@ layout(location = 1) in vec2 vertexUV;
 layout(location = 2) in vec3 normal;
 
 out vec2 UV;
-out vec3 color;
+flat out vec3 color;
 
 uniform mat4 	mvp;
 uniform int		which;
@@ -21,7 +21,13 @@ vec2 cylinder_mapping() {
 void main() {
 	gl_Position = mvp * vec4(vertex_position, 1.0);
 	UV = vec2(0.0, 0.0);
-	color = normalize(normal);
+	color = vec3(vertex_position.x * 0.5f + 0.5f, vertex_position.y * 0.5f + 0.5f, vertex_position.z * 0.5f + 0.5f);
+	if (color.x < 0.3f)
+		color.x += 0.3f;
+	if (color.y < 0.3f)
+		color.y += 0.3f;
+	if (color.z < 0.3f)
+		color.z += 0.3f;
 	if (which == 1)
 		UV = sphere_mapping();
 	if (which == 2)
