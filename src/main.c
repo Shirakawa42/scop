@@ -96,6 +96,11 @@ int		main(int ac, char **av)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizev * sizeof(float), points, GL_STATIC_DRAW);
 
+	GLuint tbo = 0;
+	glGenBuffers(1, &tbo);
+	glBindBuffer(GL_ARRAY_BUFFER, tbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeuv * sizeof(float), uv, GL_STATIC_DRAW);
+
 	GLuint	ibo;
 	glGenBuffers(1, &ibo);
 
@@ -110,13 +115,20 @@ int		main(int ac, char **av)
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
 
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), NULL);
+
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBindVertexArray(0);
 
-	texture = load_bmp("../texture/wood.bmp");
+	glTexCoordPointer(2, GL_FLOAT, 0, uv);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE);
 
-	GLuint vs = create_shader("../shaders/vertex.glsl", GL_VERTEX_SHADER);
-	GLuint fs = create_shader("../shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	texture = load_bmp("./texture/wood.bmp");
+
+	GLuint vs = create_shader("./shaders/vertex.glsl", GL_VERTEX_SHADER);
+	GLuint fs = create_shader("./shaders/fragment.glsl", GL_FRAGMENT_SHADER);
 	GLuint shader_programme = create_program(vs, fs);
 
 	GLint	matrixID = glGetUniformLocation(shader_programme, "mvp");
