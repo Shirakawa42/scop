@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parser.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/11/22 16:10:05 by lvasseur          #+#    #+#             */
+/*   Updated: 2018/11/22 16:24:00 by lvasseur         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "scop.h"
 
 float	*generate_uv(float *vertex, int size, int *sizeuv)
@@ -79,12 +91,12 @@ void	center_object(float **vertex, int size)
 			scale = max_y;
 		if (max_z > scale)
 			scale = max_z;
-		if (abs(min_x) > scale)
-			scale = abs(min_x);
-		if (abs(min_y) > scale)
-			scale = abs(min_y);
-		if (abs(min_z) > scale)
-			scale = abs(min_z);
+		if (fabsf(min_x) > scale)
+			scale = fabsf(min_x);
+		if (fabsf(min_y) > scale)
+			scale = fabsf(min_y);
+		if (fabsf(min_z) > scale)
+			scale = fabsf(min_z);
 		i += 3;
 	}
 	g_matrix = matrix_matrix_mul(g_matrix, scaling_matrix(0.70f / scale));
@@ -113,12 +125,9 @@ static void	add_vertex(char *str, float **vertex, int *size, int *error)
 	else
 		v = (float*)realloc(v, (*size + 3) * sizeof(float));
 	if (v == NULL)
-	{
 		*error = -1;
-		return ;
-	}
 	*vertex = v;
-	while (i < 3)
+	while (i < 3 && v != NULL)
 	{
 		while (*str && (*str < '0' || *str > '9') && *str != '-')
 			*str++;
@@ -151,6 +160,35 @@ static int	nb_indices_in_line(char *str)
 	return (nb);
 }
 
+static int	add_indice2(int nb, unsigned int **indices, int *size, char *str)
+{
+	int				i;
+	unsigned int	*v;
+
+	v = *indices;
+	i = 0;
+	while (i < nb)
+	{
+		v[*size] = ft_atoi(str) - 1;
+		*size += 1;
+		while (*str >= '0' && *str <= '9')
+			*str++;
+		while (*str && (*str < '0' || *str > '9'))
+			*str++;
+		i++;
+		if (!*str && i < nb)
+			return (-1);
+	}
+	if (nb == 4)
+	{
+		v[*size] = v[*size - 1];
+		v[*size - 1] = v[*size - 2];
+		v[*size + 1] = v[*size - 4];
+		*size += 2;
+	}
+	return (0);
+}
+
 static void	add_indice(char *str, unsigned int **indice, int *size, int *error)
 {
 	unsigned int	*v;
@@ -167,35 +205,20 @@ static void	add_indice(char *str, unsigned int **indice, int *size, int *error)
 	if (v == NULL)
 		v = (unsigned int*)malloc(sizeof(unsigned int) * (nb + malloc_quads));
 	else
-		v = (unsigned int*)realloc(v, (*size + nb + malloc_quads) * sizeof(unsigned int));
+		v = (unsigned int*)realloc(v, (*size + nb + malloc_quads) *
+				sizeof(unsigned int));
 	if (v == NULL)
 	{
 		*error = -1;
 		return ;
 	}
 	*indice = v;
-	while (i < nb)
-	{
-		v[*size] = ft_atoi(str) - 1;
-		*size += 1;
-		while (*str >= '0' && *str <= '9')
-			*str++;
-		while (*str && (*str < '0' || *str > '9'))
-			*str++;
-		i++;
-		if (!*str && i < nb)
-			*error = -1;
-	}
-	if (malloc_quads == 2)
-	{
-		v[*size] = v[*size - 1];
-		v[*size - 1] = v[*size - 2];
-		v[*size + 1] = v[*size - 4];
-		*size += 2;
-	}
+	if (add_indice2(nb, indice, size, str) == -1)
+		*error = -1;
 }
 
-int			parse(char *file, float **vertex, unsigned int **indices, int *vsize, int *isize)
+int			parse(char *file, float **vertex, unsigned int **indices,
+		int *vsize, int *isize)
 {
 	char 	*str;
 	int		fd;

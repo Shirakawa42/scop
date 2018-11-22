@@ -6,7 +6,7 @@
 #    By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/02/22 13:30:54 by lvasseur          #+#    #+#              #
-#    Updated: 2018/11/14 18:31:11 by lvasseur         ###   ########.fr        #
+#    Updated: 2018/11/22 15:52:41 by lvasseur         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,11 +21,11 @@ LIB_PATH = ./lib/
 INC_PATH = ./include/ $(LIB_PATH)libft/ $(LIB_PATH)glfw/include/ $(LIB_PATH)glew/
 
 GCC_FLGS = #-Werror -Wextra -Wall
-GCC_LIBS = -lglfw -lGL -lGLU -lX11 -lXxf86vm -lXrandr -lpthread -lXi -ldl -lXinerama -lXcursor -lm
+GCC_LIBS = -lglfw3 -framework AppKit -framework OpenGL -framework IOKit -framework CoreVideo
 
-SRC_NAME = main.c shaders.c glew.c rotation_matrix.c matrices.c inputs.c parser.c texture.c
+SRC_NAME = main.c shaders.c rotation_matrix.c inputs.c parser.c matrices.c texture.c
 OBJ_NAME = $(SRC_NAME:.c=.o)
-LIB_NAME = libft glfw/src
+LIB_NAME = libft glfw/src glew
 
 SRC = $(addprefix $(SRC_PATH), $(SRC_NAME))
 OBJ = $(addprefix $(OBJ_PATH), $(OBJ_NAME))
@@ -36,7 +36,8 @@ all: $(NAME)
 
 $(NAME): $(OBJ)
 	make -C $(LIB_PATH)libft -j
-	$(CC) $(GCC_FLGS) $(LIB) -lft $(INC) $(OBJ) lib/libft/libft.a $(GCC_LIBS) -o $(NAME)
+	make -C $(LIB_PATH)glew -j
+	$(CC) $(GCC_FLGS) $(LIB) -lft $(INC) $(OBJ) $(LIB_PATH)glew/glew.a $(GCC_LIBS) -o $(NAME)
 
 $(OBJ_PATH)%.o: $(SRC_PATH)%.c
 	mkdir -p $(OBJ_PATH)
@@ -48,6 +49,7 @@ clean:
 
 fclean: clean
 	make -C $(LIB_PATH)libft fclean
+	make -C $(LIB_PATH)glew fclean
 	rm -fv $(NAME)
 
 re: fclean all
