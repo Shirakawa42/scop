@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/22 15:38:54 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/11/22 16:07:38 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/29 16:54:44 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,16 @@ typedef struct	s_mat4
 	float	m[16];
 }				t_mat4;
 
+typedef struct	s_loadbmp
+{
+	unsigned char	header[54];
+	unsigned int	dataPos;
+	unsigned int	width;
+	unsigned int	height;
+	unsigned int	image_size;
+	unsigned char	*data;
+}				t_loadbmp;
+
 typedef struct	s_inputs
 {
 	short int up;
@@ -55,6 +65,34 @@ typedef struct	s_inputs
 	short int tfront;
 	short int tback;
 }				t_inputs;
+
+typedef struct	s_uvcalc
+{
+	float	min_x;
+	float	min_y;
+	float	max_x;
+	float	max_y;
+	float	k_x;
+	float	k_y;
+}				t_uvcalc;
+
+typedef struct	s_maxmin
+{
+	float	max_x;
+	float	max_y;
+	float	min_x;
+	float	min_y;
+	float	max_z;
+	float	min_z;
+}				t_maxmin;
+
+typedef struct	s_obj
+{
+	float				*vertex;
+	unsigned int		*indices;
+	int					vsize;
+	int					isize;
+}				t_obj;
 
 extern t_mat4	g_matrix;
 extern t_mat4	g_translation;
@@ -74,11 +112,17 @@ t_mat4		scaling_matrix(float scale);
 void		key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 void		events();
 void		time_handle();
-int			parse(char *file, float **vertex, unsigned int **indices, int *vsize, int *isize);
+int			parse(char *file, t_obj *obj);
 void		center_object(float **vertex, int size);
 float		*generate_uv(float *vertex, int size, int *sizeuv);
 GLuint		load_bmp(char *filename);
 t_mat4		translation_matrix(float x, float y, float z);
 t_mat4		projection_matrix();
+int			nb_indices_in_line(char *str);
+void		add_vertex(char *str, float **vertex, int *size, int *error);
+t_uvcalc	init_uvcalc(float *vertex, int size);
+t_maxmin	init_maxmin(void);
+t_maxmin	set_maxmin_and_scale(t_maxmin m, float *scale,
+					float *vertices, int i);
 
 #endif

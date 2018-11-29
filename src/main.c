@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/22 15:27:59 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/11/14 19:15:43 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/29 16:50:52 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,33 +42,29 @@ void	time_handle()
 
 int		main(int ac, char **av)
 {
-	float			*points;
 	float			*uv;
-	unsigned int	*indices;
-	int				sizev;
-	int				sizei;
 	int				sizeuv;
 	GLuint			textureID;
 	GLuint			texture;
 	t_mat4			projection;
+	t_obj			obj;
 
-	points = NULL;
-	indices = NULL;
-
-	sizei = 0;
-	sizev = 0;
+	obj.vertex = NULL;
+	obj.indices = NULL;
+	obj.isize = 0;
+	obj.vsize = 0;
 
 	if (ac < 2)
 		return (-1);
-	if (parse(av[1], &points, &indices, &sizev, &sizei) == -1)
+	if (parse(av[1], &obj) == -1)
 		return (-1);
 
 	g_delta_time = 0.0f;
 	g_matrix = scaling_matrix(1.0f);
-	g_translation = translation_matrix(0.0f, 0.0f, 0.0f);
+	g_translation = translation_matrix(0.0f, 0.0f, -1.25f);
 	projection = projection_matrix();
-	center_object(&points, sizev);
-	uv = generate_uv(points, sizev, &sizeuv);
+	center_object(&obj.vertex, obj.vsize);
+	uv = generate_uv(obj.vertex, obj.vsize, &sizeuv);
 
 	if (!glfwInit()) {
 		fprintf(stderr, "ERROR: could not start GLFW3\n");
@@ -99,7 +95,7 @@ int		main(int ac, char **av)
 	GLuint vbo = 0;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizev * sizeof(float), points, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, obj.vsize * sizeof(float), obj.vertex, GL_STATIC_DRAW);
 
 	GLuint tbo = 0;
 	glGenBuffers(1, &tbo);
@@ -115,7 +111,7 @@ int		main(int ac, char **av)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizei * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, obj.isize * sizeof(unsigned int), obj.indices, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), NULL);
@@ -145,7 +141,7 @@ int		main(int ac, char **av)
 		glUniform1i(whichID, g_which);
 
 		glBindVertexArray(vao);
-		glDrawElements(GL_TRIANGLES, sizei, GL_UNSIGNED_INT, NULL);
+		glDrawElements(GL_TRIANGLES, obj.isize, GL_UNSIGNED_INT, NULL);
 		glBindVertexArray(0);
 
 		glfwPollEvents();
@@ -158,8 +154,8 @@ int		main(int ac, char **av)
 		}
 	}
 	glfwTerminate();
-	free(indices);
-	free(points);
+	free(obj.indices);
+	free(obj.vertex);
 	free(uv);
 	return 0;
 }
