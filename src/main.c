@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/22 15:27:59 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/11/30 16:48:56 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/30 16:50:23 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,9 @@ int				main(int ac, char **av)
 	init_global();
 	center_object(&obj.vertex, obj.vsize);
 	init_opengl(&bo, obj);
-	texture = load_bmp("./texture/unicorn.bmp");
-	u.shader_programme = create_program(create_shader("./shaders/vertex.glsl",
-			GL_VERTEX_SHADER), create_shader("./shaders/fragment.glsl",
+	texture = load_bmp("../texture/unicorn.bmp");
+	u.shader_programme = create_program(create_shader("../shaders/vertex.glsl",
+			GL_VERTEX_SHADER), create_shader("../shaders/fragment.glsl",
 			GL_FRAGMENT_SHADER));
 	u.matrix_id = glGetUniformLocation(u.shader_programme, "mvp");
 	u.which_id = glGetUniformLocation(u.shader_programme, "which");
