@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 14:07:04 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/11/29 14:20:38 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/30 16:17:46 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,14 @@ GLuint	load_bmp2(t_loadbmp l, int fd)
 {
 	GLuint			texture_id;
 
-	l.dataPos = *(int*)&(l.header[0x0A]);
+	l.datapos = *(int*)&(l.header[0x0A]);
 	l.image_size = *(int*)&(l.header[0x22]);
 	l.width = *(int*)&(l.header[0x12]);
 	l.height = *(int*)&(l.header[0x16]);
 	if (l.image_size == 0)
 		l.image_size = l.width * l.height * 3;
-	if (l.dataPos == 0)
-		l.dataPos = 54;
+	if (l.datapos == 0)
+		l.datapos = 54;
 	l.data = (unsigned char*)malloc(sizeof(unsigned char) * l.image_size);
 	read(fd, l.data, l.image_size);
 	close(fd);
