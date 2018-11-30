@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/22 15:38:54 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/11/29 16:54:44 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/30 15:21:24 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,10 @@
 
 # include "libft.h"
 # include <math.h>
-# include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include "glew.h"
 # include <GLFW/glfw3.h>
 
-# define OPENGL_VERSION "4.0"
 # define ANTI_ALIASING 4
 # define W 1080
 # define H 1080
@@ -90,9 +87,19 @@ typedef struct	s_obj
 {
 	float				*vertex;
 	unsigned int		*indices;
+	float				*uv;
 	int					vsize;
 	int					isize;
+	int					uvsize;
 }				t_obj;
+
+typedef struct	s_buffer_objects
+{
+	GLuint	vbo;
+	GLuint	tbo;
+	GLuint	ibo;
+	GLuint	vao;
+}				t_buffer_objects;
 
 extern t_mat4	g_matrix;
 extern t_mat4	g_translation;

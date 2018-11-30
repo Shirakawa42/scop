@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/22 15:57:17 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/11/22 16:01:13 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/30 15:24:33 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@ t_inputs	g_inputs;
 static void	key_callback3(GLFWwindow *window, int key, int scancode,
 		int action, int mods)
 {
+	(void)window;
+	(void)scancode;
+	(void)mods;
 	if (key == 334 && action == GLFW_PRESS)
 		g_inputs.zoomin = 1;
 	else if (key == 334 && action == GLFW_RELEASE)

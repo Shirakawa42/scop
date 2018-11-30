@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/22 16:10:05 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/11/29 16:57:28 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/30 15:25:16 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,11 @@ void		add_vertex(char *str, float **vertex, int *size, int *error)
 	while (i < 3 && v != NULL)
 	{
 		while (*str && (*str < '0' || *str > '9') && *str != '-')
-			*str++;
+			str++;
 		v[*size] = ft_atof(str);
 		*size += 1;
 		while (*str && *str != ' ')
-			*str++;
+			str++;
 		i++;
 		if (!*str && i < 3)
 			*error = -1;
@@ -71,9 +71,9 @@ static int	add_indice2(int nb, t_obj *obj, char *str)
 		v[obj->isize] = ft_atoi(str) - 1;
 		obj->isize += 1;
 		while (*str >= '0' && *str <= '9')
-			*str++;
+			str++;
 		while (*str && (*str < '0' || *str > '9'))
-			*str++;
+			str++;
 		i++;
 		if (!*str && i < nb)
 			return (-1);

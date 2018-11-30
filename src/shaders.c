@@ -6,7 +6,7 @@
 /*   By: lvasseur <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/22 15:28:07 by lvasseur          #+#    #+#             */
-/*   Updated: 2018/03/06 13:45:07 by lvasseur         ###   ########.fr       */
+/*   Updated: 2018/11/30 14:03:34 by lvasseur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,13 @@ GLuint		create_shader(char *filename, int shadertype)
 {
 	GLuint		shader;
 	char		*file;
+	GLint		success;
 
+	success = 0;
 	shader = glCreateShader(shadertype);
 	file = load_file(filename);
 	glShaderSource(shader, 1, (const char **)&file, NULL);
 	glCompileShader(shader);
-	GLint success = 0;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
 	if (success == GL_FALSE)
 	{
@@ -56,13 +57,14 @@ GLuint		create_shader(char *filename, int shadertype)
 
 GLuint		create_program(GLuint vertex, GLuint fragment)
 {
-	GLuint	program_id;
+	GLuint		program_id;
+	GLint		success;
 
+	success = 0;
 	program_id = glCreateProgram();
 	glAttachShader(program_id, vertex);
 	glAttachShader(program_id, fragment);
 	glLinkProgram(program_id);
-	GLint success = 0;
 	glGetProgramiv(program_id, GL_LINK_STATUS, &success);
 	if (success == GL_FALSE)
 	{
@@ -73,6 +75,5 @@ GLuint		create_program(GLuint vertex, GLuint fragment)
 	glDetachShader(program_id, fragment);
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
-
 	return (program_id);
 }
